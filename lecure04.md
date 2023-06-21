@@ -1,32 +1,32 @@
-##AWS第４回講義課題
+## AWS第４回講義課題
 
-###VPC設定
+### VPC設定
 
-![1VPC.png](./images/1VPC.png)
+![1VPC](./images/1VPC.png)
 
-![2VPC.png](./images/2VPC.png)
+![2VPC](./images/2VPC.png)
 
-###EC2設定
+### EC2設定
 
-![3EC2.png](./images/3EC2.png)
+![3EC2](./images/3EC2.png)
 
-![4EC2.png](./images/4EC2.png)
+![4EC2](./images/4EC2.png)
 
-![5EC2.png](./images/5EC2.png)
+![5EC2](./images/5EC2.png)
 
-###RDS設定
+### RDS設定
 
-![6RDS.png](./images/6RDS.png)
+![6RDS](./images/6RDS.png)
 
-![7RDS.png](./images/7RDS.png)
+![7RDS](./images/7RDS.png)
 
-![8RDS.png](./images/8RDS.png)
+![8RDS](./images/8RDS.png)
 
-###EC2からRDSへ接続
+### EC2からRDSへ接続
 
-![9EC2-RDS.png](./images/9EC2-RDS.png)
+![9EC2-RDS](./images/9EC2-RDS.png)
 
-###今回の課題で学んだこと
+### 今回の課題で学んだこと
 
 chmod 600 〈キーペア〉：セキュリティレベルを上げるため
 
