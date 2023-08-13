@@ -134,7 +134,7 @@ end
 
 `sudo systemctl stop nginx`：Nginx停止
 
-`curl -4 [icanhazip.com](http://icanhazip.com/)`：IPアドレスを見つけるコマンド
+`curl -4 icanhazip.com`：IPアドレスを見つけるコマンド
 
 `ps ax | grep nginx`：nginxプロセスの存在を確認する
 
@@ -144,7 +144,7 @@ end
 
 `sudo tail /var/log/nginx/access.log`：アクセスログの確認
 
-`curl -I [http://localhost:](http://localhost:3000/)80`：Nginxがアクセス出来ているか確認
+`curl -I http://localhost:80`：Nginxがアクセス出来ているか確認
 
 `bundle exec unicorn_rails -c config/unicorn.rb -E development -D`：unicorn起動
 
@@ -164,7 +164,7 @@ end
 ![2.Nginx初期画面.png](./images05/2.Nginx初期画面.png)
 
 
-![3.Nginx Unicorns接続.png](./images05/3.Nginx Unicorns接続.png)
+![3.NginxUnicorn接続.png](./images05/3.NginxUnicorn接続.png)
 
 
 ![4.分けて接続.png](./images05/4.分けて接続.png)
@@ -216,7 +216,7 @@ S3のマネージメントコンソール内で画像データを削除したら
 draw.ioで構成図を作成
 
 
-![8.AWS構成図.png](./images05/8.AWS構成図.png)
+![8.AWS構成図(修正).png](./images05/8.AWS構成図(修正).png)
 
 
 以上
