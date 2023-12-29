@@ -1,0 +1,376 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters: 
+
+# MyIP,create
+  MyIP:
+    Description: IP address allowed to access EC2
+    Type: String
+
+# KeyName,create
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: "AWS::EC2::KeyPair::KeyName"
+
+# RdsMasterUsername,create
+  RdsMyUserName:
+    Description: RdsMasterUserName
+    Type: String
+
+# RdsMasterUserPassword,create
+  RdsMyUserPassword:
+    Description: RdsMasterUserPassword
+    Type: String
+    NoEcho: true
+
+Resources: 
+
+# Vpc,create
+  Vpc10:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/20
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: Vpc10Cf
+
+# InternetGateWay,create
+  InternetGateWay10:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGateWay10Cf
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc10
+      InternetGatewayId: !Ref InternetGateWay10
+
+# Subnet,create
+  PublicSubnet11:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1a"
+      VpcId: !Ref Vpc10
+      CidrBlock: 10.10.0.0/23
+      Tags:
+        - Key: Name
+          Value: PublicSubnet11Cf
+
+  PrivateSubnet11:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1a"
+      VpcId: !Ref Vpc10
+      CidrBlock: 10.10.2.0/23
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet11Cf
+
+  PublicSubnet12:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1c"
+      VpcId: !Ref Vpc10
+      CidrBlock: 10.10.4.0/23
+      Tags:
+        - Key: Name
+          Value: PublicSubnet12Cf
+
+  PrivateSubnet12:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1c"
+      VpcId: !Ref Vpc10
+      CidrBlock: 10.10.6.0/23
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet12Cf
+
+# RouteTable,RouteTableAssociation,Route,create
+  RouteTable10PuS11:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc10
+      Tags:
+        - Key: Name
+          Value: RouteTable10PuS11Cf
+  
+  RouteTableAssociation10PuS11:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet11
+      RouteTableId: !Ref RouteTable10PuS11
+
+  Route10PuS11:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTable10PuS11
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateWay10
+
+  RouteTable10PrS11:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc10
+      Tags:
+        - Key: Name
+          Value: RouteTable10PrS11Cf
+
+  RouteTableAssociation10PrS11:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet11
+      RouteTableId: !Ref RouteTable10PrS11
+
+  RouteTable10PuS12:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc10
+      Tags:
+        - Key: Name
+          Value: RouteTable10PuS12Cf
+
+  RouteTableAssociation10PuS12:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet12
+      RouteTableId: !Ref RouteTable10PuS12
+
+  Route10PuS12:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTable10PuS12
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateWay10
+
+  RouteTable10PrS12:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc10
+      Tags:
+        - Key: Name
+          Value: RouteTable10PrS12Cf
+
+  RouteTableAssociation10PrS12:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet12
+      RouteTableId: !Ref RouteTable10PrS12
+
+# Ec2SecurityGroup,create
+  SecurityGroup10PuS11:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SG10PuS11
+      GroupDescription: SGD10PuS11
+      VpcId: !Ref Vpc10
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIP
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref SecurityGroup10Elb10
+      Tags:
+        - Key: Name
+          Value: SecurityGroup10PuS11Cf
+
+# RdsSecurityGroup,create
+  SecurityGroup10PrS11:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SG10PrS11
+      GroupDescription: SGD10PrS11
+      VpcId: !Ref Vpc10
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref SecurityGroup10PuS11
+      Tags:
+        - Key: Name
+          Value: SecurityGroup10PrS11Cf
+
+# ElbSecurityGroup,create
+  SecurityGroup10Elb10:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SG10Elb10
+      GroupDescription: SGD10Elb10
+      VpcId: !Ref Vpc10
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: SecurityGroup10Elb10Cf
+
+# Ec2,create
+  Ec210:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref S3IamInstanceProfile10
+      ImageId: ami-035d55281a86f9439
+      InstanceType: t2.micro
+      Monitoring: false
+      NetworkInterfaces: 
+      - AssociatePublicIpAddress: true
+        DeviceIndex: 0
+        GroupSet: 
+          - !Ref SecurityGroup10PuS11
+        SubnetId: 
+          !Ref PublicSubnet11
+      Tags:
+        - Key: Name
+          Value: Ec210Cf
+
+# RdsSubnetGroup,create          
+  RdsdbSubnetGroup10:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: RdsDbSG10 
+      SubnetIds:
+        - !Ref PrivateSubnet11
+        - !Ref PrivateSubnet12
+
+# Rds,create
+  Rds10:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceClass: db.t3.micro
+      AvailabilityZone: "ap-northeast-1a"
+      BackupRetentionPeriod: 0
+      DBInstanceIdentifier: rds10aws
+      DBName: rds10awscf
+      DBSubnetGroupName: !Ref RdsdbSubnetGroup10
+      Engine: mysql
+      EngineVersion: "8.0.33"
+      MasterUsername: !Ref RdsMyUserName
+      MasterUserPassword: !Ref RdsMyUserPassword
+      MultiAZ: false
+      StorageType: gp2
+      VPCSecurityGroups:
+        - !Ref SecurityGroup10PrS11
+      Tags:
+        - Key: Name
+          Value: Rds10Cf
+
+# Elb,create
+  Elb10:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      Name: elb10alb
+      Scheme: internet-facing
+      SecurityGroups: 
+        - !Ref SecurityGroup10Elb10
+      Subnets: 
+        - !Ref PublicSubnet11
+        - !Ref PublicSubnet12
+      Tags: 
+        - Key: Name
+          Value: Elb10Cf
+      Type: application
+
+# TargetGroup,create
+  Tg10:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckPort: traffic-port
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      IpAddressType: ipv4
+      Matcher: 
+        HttpCode: "200"
+      Name: tg10alb
+      Port: 80
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Tags: 
+        - Key: Name
+          Value: Tg10Cf
+      Targets: 
+        - Id: !Ref Ec210
+      TargetType: instance
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref Vpc10
+
+# Listener,create
+  Listener10:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions: 
+        - Type: forward
+          TargetGroupArn: !Ref Tg10
+      LoadBalancerArn: !Ref Elb10
+      Port: 80
+      Protocol: HTTP
+
+# S3,create
+  S3Bucket10:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: Private
+      BucketName: s3bucket10-cf
+      Tags:
+        - Key: Name
+          Value: S3Bucket10Cf
+
+# IamRole,create
+  S3IamRole10:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ec2.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+
+# IamPolicy,create
+  S3IamPolicy10:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: s3access10
+      Roles:
+       - !Ref S3IamRole10
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+            - "s3:ListAllMyBuckets"
+            - "s3:GetBucketLocation"
+          Resource: "arn:aws:s3:::*"
+        - Effect: Allow
+          Action: "*"
+          Resource:
+            - "arn:aws:s3:::s3bucket10-cf"
+            - "arn:aws:s3:::s3bucket10-cf/*"
+
+# IamInstanceProfile,create
+  S3IamInstanceProfile10:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref S3IamRole10
