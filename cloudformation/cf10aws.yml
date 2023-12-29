@@ -1,5 +1,17 @@
 AWSTemplateFormatVersion: 2010-09-09
 
+Parameters: 
+
+# MyIP,create
+  MyIP:
+    Description: IP address allowed to access EC2
+    Type: String
+
+# KeyName,create
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: "AWS::EC2::KeyPair::KeyName"
+
 Resources: 
 
 # Vpc,create
@@ -10,7 +22,7 @@ Resources:
       EnableDnsSupport: true
       Tags:
         - Key: Name
-          Value: Vpc10cf
+          Value: Vpc10Cf
 
 # InternetGateWay,create
   InternetGateWay10:
@@ -18,7 +30,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: InternetGateWay10cf
+          Value: InternetGateWay10Cf
 
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -35,7 +47,7 @@ Resources:
       CidrBlock: 10.10.0.0/23
       Tags:
         - Key: Name
-          Value: PublicSubnet11cf
+          Value: PublicSubnet11Cf
 
   PrivateSubnet11:
     Type: AWS::EC2::Subnet
@@ -45,7 +57,7 @@ Resources:
       CidrBlock: 10.10.2.0/23
       Tags:
         - Key: Name
-          Value: PrivateSubnet11cf
+          Value: PrivateSubnet11Cf
 
   PublicSubnet12:
     Type: AWS::EC2::Subnet
@@ -55,7 +67,7 @@ Resources:
       CidrBlock: 10.10.4.0/23
       Tags:
         - Key: Name
-          Value: PublicSubnet12cf
+          Value: PublicSubnet12Cf
 
   PrivateSubnet12:
     Type: AWS::EC2::Subnet
@@ -65,121 +77,121 @@ Resources:
       CidrBlock: 10.10.6.0/23
       Tags:
         - Key: Name
-          Value: PrivateSubnet12cf
+          Value: PrivateSubnet12Cf
 
 # RouteTable,RouteTableAssociation,Route,create
-  RouteTable10pus11:
+  RouteTable10Pus11:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref Vpc10
       Tags:
         - Key: Name
-          Value: RouteTable10pus11cf
+          Value: RouteTable10Pus11Cf
   
-  RouteTableAssociation10pus11:
+  RouteTableAssociation10Pus11:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet11
-      RouteTableId: !Ref RouteTable10pus11
+      RouteTableId: !Ref RouteTable10Pus11
 
-  Route10pus11:
+  Route10Pus11:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref RouteTable10pus11
+      RouteTableId: !Ref RouteTable10Pus11
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateWay10
 
-  RouteTable10prs11:
+  RouteTable10Prs11:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref Vpc10
       Tags:
         - Key: Name
-          Value: RouteTable10prs11cf
+          Value: RouteTable10Prs11Cf
 
-  RouteTableAssociation10prs11:
+  RouteTableAssociation10Prs11:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PrivateSubnet11
-      RouteTableId: !Ref RouteTable10prs11
+      RouteTableId: !Ref RouteTable10Prs11
 
-  RouteTable10pus12:
+  RouteTable10Pus12:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref Vpc10
       Tags:
         - Key: Name
-          Value: RouteTable10pus12cf
+          Value: RouteTable10Pus12Cf
 
-  RouteTableAssociation10pus12:
+  RouteTableAssociation10Pus12:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet12
-      RouteTableId: !Ref RouteTable10pus12
+      RouteTableId: !Ref RouteTable10Pus12
 
-  Route10pus12:
+  Route10Pus12:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref RouteTable10pus12
+      RouteTableId: !Ref RouteTable10Pus12
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateWay10
 
-  RouteTable10prs12:
+  RouteTable10Prs12:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref Vpc10
       Tags:
         - Key: Name
-          Value: RouteTable10prs12cf
+          Value: RouteTable10Prs12Cf
 
-  RouteTableAssociation10prs12:
+  RouteTableAssociation10Prs12:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PrivateSubnet12
-      RouteTableId: !Ref RouteTable10prs12
+      RouteTableId: !Ref RouteTable10Prs12
 
 # Ec2SecurityGroup,create
-  SecurityGroup10pus11:
+  SecurityGroup10Pus11:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: Sg10pus11
-      GroupDescription: Sgd10pus11
+      GroupName: Sg10Pus11
+      GroupDescription: Sgd10Pus11
       VpcId: !Ref Vpc10
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref MyIP
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          SourceSecurityGroupId: !Ref SecurityGroup10elb10
+          SourceSecurityGroupId: !Ref SecurityGroup10Elb10
       Tags:
         - Key: Name
-          Value: SecurityGroup10pus11cf
+          Value: SecurityGroup10Pus11Cf
 
 # RdsSecurityGroup,create
-  SecurityGroup10prs11:
+  SecurityGroup10Prs11:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: Sg10prs11
-      GroupDescription: Sgd10prs11
+      GroupName: Sg10Prs11
+      GroupDescription: Sgd10Prs11
       VpcId: !Ref Vpc10
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          SourceSecurityGroupId: !Ref SecurityGroup10pus11
+          SourceSecurityGroupId: !Ref SecurityGroup10Pus11
       Tags:
         - Key: Name
-          Value: SecurityGroup10prs11cf
+          Value: SecurityGroup10Prs11Cf
 
 # ElbSecurityGroup,create
-  SecurityGroup10elb10:
+  SecurityGroup10Elb10:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: Sg10elb10
-      GroupDescription: Sgd10elb10
+      GroupName: Sg10Elb10
+      GroupDescription: Sgd10Elb10
       VpcId: !Ref Vpc10
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -188,13 +200,13 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: SecurityGroup10elb10cf
+          Value: SecurityGroup10Elb10Cf
 
 # Ec2,create
   Ec210:
     Type: AWS::EC2::Instance
     Properties:
-      KeyName: raisetech-aws-kei-key 
+      KeyName: !Ref KeyName 
       IamInstanceProfile: !Ref S3IamInstanceProfile10
       ImageId: ami-035d55281a86f9439
       InstanceType: t2.micro
@@ -203,23 +215,23 @@ Resources:
       - AssociatePublicIpAddress: true
         DeviceIndex: 0
         GroupSet: 
-          - !Ref SecurityGroup10pus11
+          - !Ref SecurityGroup10Pus11
         SubnetId: 
           !Ref PublicSubnet11
       Tags:
         - Key: Name
-          Value: Ec210cf
+          Value: Ec210Cf
 
 # RdsSubnetGroup,create          
   RdsdbSubnetGroup10:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
-      DBSubnetGroupDescription: Rdsdbsg10 
+      DBSubnetGroupDescription: RdsdbSg10 
       SubnetIds:
         - !Ref PrivateSubnet11
         - !Ref PrivateSubnet12
 
-# RDS,create
+# Rds,create
   Rds10:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -237,10 +249,10 @@ Resources:
       MultiAZ: false
       StorageType: gp2
       VPCSecurityGroups:
-        - !Ref SecurityGroup10prs11
+        - !Ref SecurityGroup10Prs11
       Tags:
         - Key: Name
-          Value: Rds10cf
+          Value: Rds10Cf
 
 # Elb,create
   Elb10:
@@ -250,13 +262,13 @@ Resources:
       Name: elb10alb
       Scheme: internet-facing
       SecurityGroups: 
-        - !Ref SecurityGroup10elb10
+        - !Ref SecurityGroup10Elb10
       Subnets: 
         - !Ref PublicSubnet11
         - !Ref PublicSubnet12
       Tags: 
         - Key: Name
-          Value: Elb10cf
+          Value: Elb10Cf
       Type: application
 
 # TargetGroup,create
@@ -279,7 +291,7 @@ Resources:
       ProtocolVersion: HTTP1
       Tags: 
         - Key: Name
-          Value: Tg10cf
+          Value: Tg10Cf
       Targets: 
         - Id: !Ref Ec210
       TargetType: instance
@@ -305,7 +317,7 @@ Resources:
       BucketName: s3bucket10-cf
       Tags:
         - Key: Name
-          Value: S3Bucket10cf
+          Value: S3Bucket10Cf
 
 # IamRole,create
   S3IamRole10:
