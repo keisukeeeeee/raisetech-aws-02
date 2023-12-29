@@ -12,6 +12,17 @@ Parameters:
     Description: The EC2 Key Pair to allow SSH access to the instance
     Type: "AWS::EC2::KeyPair::KeyName"
 
+# RdsMasterUsername,create
+  RdsMyUserName:
+    Description: RdsMasterUserName
+    Type: String
+
+# RdsMasterUserPassword,create
+  RdsMyUserPassword:
+    Description: RdsMasterUserPassword
+    Type: String
+    NoEcho: true
+
 Resources: 
 
 # Vpc,create
@@ -244,8 +255,8 @@ Resources:
       DBSubnetGroupName: !Ref RdsdbSubnetGroup10
       Engine: mysql
       EngineVersion: "8.0.33"
-      MasterUsername: rds10admin
-      MasterUserPassword: rds10admincf
+      MasterUsername: !Ref RdsMyUserName
+      MasterUserPassword: !Ref RdsMyUserPassword
       MultiAZ: false
       StorageType: gp2
       VPCSecurityGroups:
