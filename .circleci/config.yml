@@ -1,14 +1,18 @@
 version: 2.1
-
+orbs:
+  python: circleci/python@2.0.3
 jobs:
-  hello-job:
-    machine:
-      image: ubuntu-2204:2022.07.1
+  cfn-lint:
+    executor: python/default
     steps:
-      - checkout # check out the code in the project directory
-      - run: echo "hello world" # run the `echo` command
+      - checkout
+      - run: pip install cfn-lint
+      - run:
+          name: run cfn-lint
+          command: |
+            cfn-lint -i W3002 -t cloudformation/*.yml
 
 workflows:
-  my-workflow:
+  raisetech:
     jobs:
-      - hello-job
+      - cfn-lint
