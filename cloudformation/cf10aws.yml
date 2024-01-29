@@ -334,22 +334,10 @@ Resources:
   S3Bucket10:
     Type: AWS::S3::Bucket
     Properties: 
-      BucketName: s3bucket10-cf
+      BucketName: s3b10cf
       Tags:
         - Key: Name
           Value: S3Bucket10Cf
-
-# S3BuketPolicy,create
-  S3BucketPolicy10:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref S3Bucket10
-      PolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal: '*'
-            Action: s3:GetObject
-            Resource: !Sub arn:aws:s3:::${S3Bucket10}/*
 
 # IamRole,create
   S3IamRole10:
@@ -385,8 +373,8 @@ Resources:
         - Effect: Allow
           Action: "*"
           Resource:
-            - "arn:aws:s3:::s3bucket10-cf"
-            - "arn:aws:s3:::s3bucket10-cf/*"
+            - "arn:aws:s3:::s3b10cf"
+            - "arn:aws:s3:::s3b10cf/*"
 
 # IamInstanceProfile,create
   S3IamInstanceProfile10:
