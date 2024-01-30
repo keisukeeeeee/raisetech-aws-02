@@ -53,7 +53,9 @@ Resources:
   PublicSubnet11:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: "ap-northeast-1a"
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref AWS::Region
       VpcId: !Ref Vpc10
       CidrBlock: 10.10.0.0/23
       Tags:
@@ -63,7 +65,9 @@ Resources:
   PrivateSubnet11:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: "ap-northeast-1a"
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref AWS::Region
       VpcId: !Ref Vpc10
       CidrBlock: 10.10.2.0/23
       Tags:
@@ -73,7 +77,9 @@ Resources:
   PublicSubnet12:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: "ap-northeast-1c"
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref AWS::Region
       VpcId: !Ref Vpc10
       CidrBlock: 10.10.4.0/23
       Tags:
@@ -83,7 +89,9 @@ Resources:
   PrivateSubnet12:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: "ap-northeast-1c"
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref AWS::Region
       VpcId: !Ref Vpc10
       CidrBlock: 10.10.6.0/23
       Tags:
@@ -248,7 +256,9 @@ Resources:
     Properties:
       AllocatedStorage: 20
       DBInstanceClass: db.t3.micro
-      AvailabilityZone: "ap-northeast-1a"
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref AWS::Region
       BackupRetentionPeriod: 0
       DBInstanceIdentifier: rds10aws
       DBName: rds10awscf
@@ -324,8 +334,7 @@ Resources:
   S3Bucket10:
     Type: AWS::S3::Bucket
     Properties: 
-      AccessControl: Private
-      BucketName: s3bucket10-cf
+      BucketName: s3b10cf
       Tags:
         - Key: Name
           Value: S3Bucket10Cf
@@ -364,8 +373,8 @@ Resources:
         - Effect: Allow
           Action: "*"
           Resource:
-            - "arn:aws:s3:::s3bucket10-cf"
-            - "arn:aws:s3:::s3bucket10-cf/*"
+            - "arn:aws:s3:::s3b10cf"
+            - "arn:aws:s3:::s3b10cf/*"
 
 # IamInstanceProfile,create
   S3IamInstanceProfile10:
