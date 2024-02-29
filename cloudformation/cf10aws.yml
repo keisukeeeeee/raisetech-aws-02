@@ -6,22 +6,33 @@ Parameters:
   MyIP:
     Description: IP address allowed to access EC2
     Type: String
+    # CircleCI有料プランじゃないとIPアドレス範囲指定ができないため、以下を許容する
+    Default: 0.0.0.0/0
 
 # KeyName,create
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instance
     Type: "AWS::EC2::KeyPair::KeyName"
+    Default: raisetech-aws-kei-key
 
 # RdsMasterUsername,create
   RdsMyUserName:
     Description: RdsMasterUserName
     Type: String
+    MinLength: 5
+    MaxLength: 128
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    Default: admin
 
 # RdsMasterUserPassword,create
   RdsMyUserPassword:
     Description: RdsMasterUserPassword
     Type: String
     NoEcho: true
+    MinLength: 8
+    MaxLength: 128
+    AllowedPattern: "[a-zA-Z0-9]*"
+    Default: adminadmin
 
 Resources: 
 
@@ -178,13 +189,13 @@ Resources:
       VpcId: !Ref Vpc10
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: !Ref MyIP
-        - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           SourceSecurityGroupId: !Ref SecurityGroup10Elb10
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIP
       Tags:
         - Key: Name
           Value: SecurityGroup10PuS11Cf
