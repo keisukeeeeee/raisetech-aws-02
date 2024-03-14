@@ -25,7 +25,11 @@ jobs:
       - run:
           name: deploy cloudformation
           command: |
-            aws cloudformation deploy --template-file cloudformation/cf10aws.yml --stack-name cci-aws-cf
+            aws cloudformation deploy \
+            --template-file cloudformation/cf10aws.yml \
+            --stack-name cci-aws-cf \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides RdsMyUserPassword=adminadmin
 
 workflows:
   circleci-cloudformation:
