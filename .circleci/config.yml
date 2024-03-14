@@ -14,8 +14,21 @@ jobs:
           name: run cfn-lint
           command: |
             cfn-lint -i W3002 -t cloudformation/*.yml
+  cloud-formation-deploy:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: deploy cloudformation
+          command: |
+            aws cloudformation deploy --template-file cloudformation/cf10aws.yml --stack-name cci-aws-cf
 
 workflows:
-  raisetech:
+  circleci-cloudformation:
     jobs:
       - cfn-lint
+      - cloud-formation-deploy
