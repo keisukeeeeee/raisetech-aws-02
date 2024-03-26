@@ -35,8 +35,7 @@ jobs:
           name: delete cloudformation stack
           command: |
             aws cloudformation delete-stack \
-              --stack-name cci-aws-cf \
-              --region AWS_DEFAULT_REGION
+              --stack-name cci-aws-cf
 #  ansible-playbook:
 #    executor: ansible-playbook/default
 #    steps:
