@@ -59,7 +59,9 @@ workflows:
   circleci-cloudformation:
     jobs:
       - cfn-lint
-      - cloud-formation-deploy
+      - cloud-formation-deploy:
+          requires:
+            - cfn-lint
       - ansible-playbook:
           requires:
             - cloud-formation-deploy
