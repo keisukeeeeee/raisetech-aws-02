@@ -5,3 +5,4 @@
     ansible.builtin.yum:
       name: git
       state: present
+      become: yes
