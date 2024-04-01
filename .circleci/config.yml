@@ -36,12 +36,14 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
-  #     - add_ssh_keys:
-  #         fingerprints:
-  #           - "SHA256: ULjv9tfyMZOB8aYBSgy1+XBD1dygIVbVetDqcomUn9A"
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256: ULjv9tfyMZOB8aYBSgy1+XBD1dygIVbVetDqcomUn9A"
       - ansible-playbook/install:
           version: 2.10.7
-      # - ansible-playbook/playbook:
+      - ansible-playbook/playbook:
+          playbook: ansible/palybook.yml
+          playbook-options: '-i ansible/inventory'
 
           
 # cloudformationを終了させる

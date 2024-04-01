@@ -1,8 +1,8 @@
-# ---
-# - hosts: 
-#   become: yes
-#   tasks:
-#   - name: Install Git to target node
-#     ansible.builtin.yum:
-#      name: git
-#      state: present
+---
+- hosts: 57.180.62.148
+  # become: yes
+  tasks:
+  - name: Install Git to target node
+    ansible.builtin.yum:
+     name: git
+     state: present
