@@ -3,6 +3,5 @@
   tasks:
   - name: Install Git to target node
     ansible.builtin.yum:
-      become: yes
       name: git
       state: present
