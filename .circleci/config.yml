@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@4.1.3
-#  ansible-playbook: orbss/ansible-playbook@0.0.5
+  ansible-playbook: orbss/ansible-playbook@0.0.5
 
 jobs:
   cfn-lint:
@@ -26,30 +26,41 @@ jobs:
       - run:
           name: deploy cloudformation
           command: |
+            set -x
             aws cloudformation deploy \
             --template-file cloudformation/cf10aws.yml \
             --stack-name cci-aws-cf \
             --capabilities CAPABILITY_NAMED_IAM \
             --parameter-overrides RdsMyUserPassword=adminadmin
-      - run:
-          name: delete cloudformation stack
-          command: |
-            aws cloudformation delete-stack \
-              --stack-name cci-aws-cf
-#  ansible-playbook:
-#    executor: ansible-playbook/default
+  ansible-playbook:
+    executor: ansible-playbook/default
+    steps:
+      - checkout
+      # - add_ssh_keys:
+      #     fingerprints:
+      #       - "SHA256: ULjv9tfyMZOB8aYBSgy1+XBD1dygIVbVetDqcomUn9A"
+      - ansible-playbook/install:
+          version: 2.16.3
+      # - ansible-playbook/playbook:
+
+          
+# cloudformationを終了させる
+#  cloud-formation-delete:
+#    executor: aws-cli/default
 #    steps:
 #      - checkout
-#      - add_ssh_keys:
-#          fingerprints:
-#            - "SHA256: ULjv9tfyMZOB8aYBSgy1+XBD1dygIVbVetDqcomUn9A"
-#      - ansible-playbook/install:
-#          version: 2.16.3
-#      - ansible-playbook/playbook:
+#      - run:
+#          name: delete cloudformation stack
+#          command: |
+#            aws cloudformation delete-stack \
+#              --stack-name cci-aws-cf
 
 workflows:
   circleci-cloudformation:
     jobs:
       - cfn-lint
       - cloud-formation-deploy
-#      - ansible-playbook
+      - ansible-playbook:
+          requires:
+            - cloud-formation-deploy
+    #  - cloud-formation-delete
