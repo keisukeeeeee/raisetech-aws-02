@@ -1,5 +1,5 @@
 ---
-- hosts: 57.180.62.148
+- hosts: 43.206.222.229
   become: true
   tasks:
   - name: Install Git to target node
