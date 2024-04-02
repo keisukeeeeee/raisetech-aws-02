@@ -38,7 +38,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:ULjv9tfyMZOB8aYBSgy1+XBD1dygIVbVetDqcomUn9A"
+            - "SHA256: GKsjKHeXRaD/gBXKN0aOoveoKRdmWTkggh8MlNUbWnQ"
       - ansible-playbook/install:
           version: 2.10.7
       - ansible-playbook/playbook:
