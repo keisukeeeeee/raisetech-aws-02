@@ -84,4 +84,6 @@ workflows:
       - serverspec:
           requires:
             - ansible-playbook
-    #  - cloud-formation-delete
+      # - cloud-formation-delete:
+      #     requires:
+      #       - serverspec

@@ -2,11 +2,18 @@
 - hosts: 43.206.222.229
   become: true
   tasks:
-  - name: Upgrade all packages
+
+  - name: upgrade all packages
     ansible.builtin.yum:
       name: '*'
       state: latest
-  - name: Install Git to target node
+
+  - name: install git to target node
     ansible.builtin.yum:
       name: git
+      state: present
+  
+  - name: install mysql to taget node
+    yum:
+      name: mysql
       state: present

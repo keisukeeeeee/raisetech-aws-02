@@ -28,6 +28,12 @@ describe package('git') do
   it { should be_installed }
 end
 
+# mysql
+describe service('mysqld') do
+  it { should be_enabled   }
+  it { should be_running   }
+end
+
 # ruby version
 # describe command('ruby -v') do
 #   its(:stdout) { should match /ruby 3\.1\.2/ }
