@@ -23,6 +23,11 @@ require 'spec_helper'
 #   it { should be_running }
 # end
 
+# git
+describe package('git') do
+  it { should be_installed }
+end
+
 describe port(80) do
   it { should be_listening }
 end
