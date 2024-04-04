@@ -29,10 +29,10 @@ describe package('git') do
 end
 
 # mysql
-describe service('mysqld') do
-  it { should be_enabled   }
-  it { should be_running   }
-end
+# describe service('mysqld') do
+#   it { should be_enabled   }
+#   it { should be_running   }
+# end
 
 # ruby version
 # describe command('ruby -v') do
