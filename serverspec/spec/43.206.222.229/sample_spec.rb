@@ -29,9 +29,9 @@ describe package('git') do
 end
 
 # mysql
-describe service('mysqld') do
+describe service('mysql') do
   it { should be_enabled   }
-  # it { should be_running   }
+  it { should be_running   }
 end
 
 # ruby version
