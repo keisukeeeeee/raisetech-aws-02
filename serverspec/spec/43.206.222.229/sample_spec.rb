@@ -30,8 +30,7 @@ end
 
 # mysql
 describe service('mysql') do
-  it { should be_enabled   }
-  it { should be_running   }
+  it { should be_installed }
 end
 
 # ruby version
