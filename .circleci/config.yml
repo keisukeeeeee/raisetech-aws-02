@@ -4,6 +4,7 @@ orbs:
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@4.1.3
   ansible-playbook: orbss/ansible-playbook@0.0.5
+  ruby: circleci/ruby@2.1.1
 
 jobs:
   cfn-lint:
@@ -43,7 +44,21 @@ jobs:
           version: 2.10.7
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
-          playbook-options: -i ansible/inventory
+          playbook-options: '-i ansible/inventory'
+  serverspec:
+    executor: ruby/default
+    steps:
+      - checkout
+      - ruby/install:
+          version: '3.1.2'
+      - ruby/install-deps:
+          app-dir: serverspec
+      - run:
+          name: execute serverspec
+          command: |
+            cd serverspec
+            bundle exec rspec
+
           
 # cloudformationを終了させる
 #  cloud-formation-delete:
@@ -66,4 +81,7 @@ workflows:
       - ansible-playbook:
           requires:
             - cloud-formation-deploy
+      - serverspec:
+          requires:
+            - ansible-playbook
     #  - cloud-formation-delete

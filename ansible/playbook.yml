@@ -2,6 +2,10 @@
 - hosts: 43.206.222.229
   become: true
   tasks:
+  - name: Upgrade all packages
+    ansible.builtin.yum:
+      name: '*'
+      state: latest
   - name: Install Git to target node
     ansible.builtin.yum:
       name: git

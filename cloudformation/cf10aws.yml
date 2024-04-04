@@ -10,10 +10,10 @@ Parameters:
     Default: 0.0.0.0/0
 
 # KeyName,create
-  # KeyName:
-  #   Description: The EC2 Key Pair to allow SSH access to the instance
-  #   Type: "AWS::EC2::KeyPair::KeyName"
-  #   Default: cci-kei
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: "AWS::EC2::KeyPair::KeyName"
+    Default: cci-kei
 
 # RdsMasterUsername,create
   RdsMyUserName:
@@ -236,7 +236,7 @@ Resources:
   Ec210:
     Type: AWS::EC2::Instance
     Properties:
-      KeyName: cci-kei # !Ref KeyName
+      KeyName: !Ref KeyName
       IamInstanceProfile: !Ref S3IamInstanceProfile10
       ImageId: ami-035d55281a86f9439
       InstanceType: t2.micro
