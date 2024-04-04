@@ -29,7 +29,7 @@ describe package('git') do
 end
 
 # mysql
-describe service('mysql') do
+describe package('mysql') do
   it { should be_installed }
 end
 
