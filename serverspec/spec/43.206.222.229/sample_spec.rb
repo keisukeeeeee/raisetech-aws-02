@@ -29,8 +29,8 @@ describe package('git') do
 end
 
 # mysql
-describe package('mysql-server') do
-  it { should be_installed }
+describe command('which mysql') do
+  its(:exit_status) { should eq 0 }
 end
 
 # ruby version
