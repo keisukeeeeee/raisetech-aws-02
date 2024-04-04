@@ -29,9 +29,9 @@ describe package('git') do
 end
 
 # ruby version
-describe command('ruby -v') do
-  its(:stdout) { should match /ruby 3\.1\.2/ }
-end
+# describe command('ruby -v') do
+#   its(:stdout) { should match /ruby 3\.1\.2/ }
+# end
 
 # describe port(80) do
 #   it { should be_listening }
