@@ -10,10 +10,39 @@
 
   - name: install git to target node
     ansible.builtin.yum:
-      name: git
+      name: 
+        - gcc-c++
+        - make
+        - patch
+        - git
+        - curl
+        - zlib-devel
+        - openssl-devel
+        - ImageMagick-devel
+        - readline-devel
+        - libcurl-devel
+        - libffi-devel
+        - libicu-devel
+        - libxml2-devel
+        - libxslt-devel
       state: present
-  
+
+  - name: nodejs17.x check
+    ansible.builtin.stat:
+      path: /usr/local/bin/node
+    register: nodejs_bin
+
+  - name: setup nodejs17.x
+    shell: "curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -"
+    when: not nodejs_bin.stat.exists
+    changed_when: false
+
+  - name: install node.js to taget node
+    ansible.builtin.yum:
+      name: nodejs
+      state: present
+
   - name: install mysql to taget node
-    yum:
+    ansible.builtin.yum:
       name: mysql
       state: present
