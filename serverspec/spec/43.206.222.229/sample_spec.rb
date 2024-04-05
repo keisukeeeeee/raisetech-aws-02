@@ -33,7 +33,7 @@ describe command('which mysql') do
   its(:exit_status) { should eq 0 }
 end
 
-node.js version
+# node.js
 describe command('which node') do
   its(:exit_status) { should eq 0 }
 end
