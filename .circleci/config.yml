@@ -60,15 +60,16 @@ jobs:
             bundle exec rspec
 
 # cloudformationを終了させる
-#  cloud-formation-delete:
-#    executor: aws-cli/default
-#    steps:
-#      - checkout
-#      - run:
-#          name: delete cloudformation stack
-#          command: |
-#            aws cloudformation delete-stack \
-#              --stack-name cci-aws-cf
+  cloud-formation-delete:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - run:
+          name: delete cloudformation stack
+          command: |
+            set -x
+            aws cloudformation delete-stack \
+            --stack-name cci-aws-cf
 
 workflows:
   circleci-cloudformation:
@@ -83,6 +84,6 @@ workflows:
       - serverspec:
           requires:
             - ansible-playbook
-      # - cloud-formation-delete:
-      #     requires:
-      #       - serverspec
+      - cloud-formation-delete:
+          requires:
+            - serverspec

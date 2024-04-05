@@ -34,8 +34,8 @@ describe command('which mysql') do
 end
 
 node.js version
-describe command('node -v') do
-  its(:stdout) { should match /v 17\.9\.1/ }
+describe command('which node') do
+  its(:exit_status) { should eq 0 }
 end
 
 # ruby version

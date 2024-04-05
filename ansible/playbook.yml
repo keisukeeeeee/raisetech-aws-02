@@ -29,18 +29,18 @@
 
   - name: nodejs17.x check
     ansible.builtin.stat:
-      path: /usr/local/bin/node
-    register: nodejs_bin
+      path: /etc/yum.repos.d/nodesource-el7.repo
+    register: nodesource_repo
 
   - name: setup nodejs17.x
-    shell: "curl -fsSL https://rpm.nodesource.com/setup_17.x | bash -"
-    when: not nodejs_bin.stat.exists
+    shell: "curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -"
+    when: not nodesource_repo.stat.exists
     changed_when: false
 
   - name: install node.js to taget node
     ansible.builtin.yum:
       name: nodejs
-      state: present
+      state: latest
 
   - name: install mysql to taget node
     ansible.builtin.yum:
