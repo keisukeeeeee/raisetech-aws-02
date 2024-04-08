@@ -27,20 +27,33 @@
         - libxslt-devel
       state: present
 
-  - name: Nodejs17.x check
-    ansible.builtin.stat:
-      path: /etc/yum.repos.d/nodesource-el7.repo
-    register: nodesource_repo
+  - name: check node exists
+    shell: node --version
+    register: node_exists
+    changed_when: no
+    ignore_errors: true
 
-  - name: Setup nodejs17.x
-    shell: curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash - #"curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -"
-    when: not nodesource_repo.stat.exists
-    changed_when: false
+  - name: nvm script download
+    get_url:
+      url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
+      dest: /home/ec2-user/nvm.sh
+      mode: '0775'
+    when: node_exists is failed
 
-  - name: Install node.js to taget node
-    ansible.builtin.yum:
-      name: nodejs-v17.9.1
-      state: present
+  - name: nvm install
+    command: /bin/bash /home/ec2-user/nvm.sh
+    args:
+      creates: /home/ec2-user/.nvm
+    when: node_exists is failed
+
+  - name: source .bashrc
+    shell: |
+      source ~/.bashrc
+    when: node_exists is failed
+
+  - name: node install
+    shell: bash -lc "nvm install 17.9.1"
+    when: node_exists is failed
 
   - name: Install mysql to taget node
     ansible.builtin.yum:
