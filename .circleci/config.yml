@@ -43,19 +43,19 @@ jobs:
       - run:
           name: Associate Elastic IP
           command: |
-            aws ec2 associate-address --instance-id $INSTANCE_ID --public-ip 35.78.59.122
-  # ansible-playbook:
-  #   executor: ansible-playbook/default
-  #   steps:
-  #     - checkout
-  #     - add_ssh_keys:
-  #         fingerprints:
-  #           - "SHA256: GKsjKHeXRaD/gBXKN0aOoveoKRdmWTkggh8MlNUbWnQ"
-  #     - ansible-playbook/install:
-  #         version: 2.10.7
-  #     - ansible-playbook/playbook:
-  #         playbook: ansible/playbook.yml
-  #         playbook-options: '-i ansible/inventory'
+            aws ec2 associate-address --instance-id $INSTANCE_ID --public-ip ELASTIC_IP
+  ansible-playbook:
+    executor: ansible-playbook/default
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256: GKsjKHeXRaD/gBXKN0aOoveoKRdmWTkggh8MlNUbWnQ"
+      - ansible-playbook/install:
+          version: 2.10.7
+      - ansible-playbook/playbook:
+          playbook: ansible/playbook.yml
+          playbook-options: '-i ansible/inventory'
   # serverspec:
   #   executor: ruby/default
   #   steps:
@@ -93,9 +93,9 @@ workflows:
       - cloud-formation-deploy:
           requires:
             - cfn-lint
-      # - ansible-playbook:
-      #     requires:
-      #       - cloud-formation-deploy
+      - ansible-playbook:
+          requires:
+            - cloud-formation-deploy
       # - serverspec:
       #     requires:
       #       - ansible-playbook
