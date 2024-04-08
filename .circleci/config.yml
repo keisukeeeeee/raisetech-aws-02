@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Associate Elastic IP
           command: |
-            aws ec2 associate-address --instance-id $INSTANCE_ID --public-ip ELASTIC_IP
+            aws ec2 associate-address --instance-id $INSTANCE_ID --public-ip 35.78.59.122
   ansible-playbook:
     executor: ansible-playbook/default
     steps:
