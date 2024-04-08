@@ -93,9 +93,9 @@ workflows:
       - cloud-formation-deploy:
           requires:
             - cfn-lint
-      - ansible-playbook:
-          requires:
-            - cloud-formation-deploy
+      # - ansible-playbook:
+      #     requires:
+      #       - cloud-formation-deploy
       # - serverspec:
       #     requires:
       #       - ansible-playbook
