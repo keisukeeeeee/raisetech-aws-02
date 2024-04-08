@@ -1,14 +1,14 @@
 ---
-- hosts: 43.206.222.229
+- hosts: webserver
   become: true
   tasks:
 
-  - name: upgrade all packages
+  - name: Upgrade all packages
     ansible.builtin.yum:
       name: '*'
       state: latest
 
-  - name: install git to target node
+  - name: Install git to target node
     ansible.builtin.yum:
       name: 
         - gcc-c++
@@ -27,22 +27,22 @@
         - libxslt-devel
       state: present
 
-  - name: nodejs17.x check
+  - name: Nodejs17.x check
     ansible.builtin.stat:
       path: /etc/yum.repos.d/nodesource-el7.repo
     register: nodesource_repo
 
-  - name: setup nodejs17.x
-    shell: "curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -"
+  - name: Setup nodejs17.x
+    shell: curl -sL https://rpm.nodesource.com/setup_18.x | sudo bash - #"curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -"
     when: not nodesource_repo.stat.exists
     changed_when: false
 
-  - name: install node.js to taget node
+  - name: Install node.js to taget node
     ansible.builtin.yum:
-      name: nodejs
-      state: latest
+      name: nodejs-v17.9.1
+      state: present
 
-  - name: install mysql to taget node
+  - name: Install mysql to taget node
     ansible.builtin.yum:
       name: mysql
       state: present

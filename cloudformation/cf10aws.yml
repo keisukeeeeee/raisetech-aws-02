@@ -32,7 +32,7 @@ Parameters:
     MinLength: 8
     MaxLength: 128
     AllowedPattern: "[a-zA-Z0-9]*"
-    Default: adminadmin
+    Default: ADMINADMIN
 
 Resources: 
 
