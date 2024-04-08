@@ -1,2 +1,2 @@
 [webserver]
-35.78.59.122
+"${ELASTIC_IP}"
