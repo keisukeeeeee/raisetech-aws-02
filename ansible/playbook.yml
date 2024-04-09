@@ -1,0 +1,61 @@
+---
+- hosts: webserver
+  become: true
+  tasks:
+
+  - name: Upgrade all packages
+    ansible.builtin.yum:
+      name: '*'
+      state: latest
+
+  - name: Install git to target node
+    ansible.builtin.yum:
+      name: 
+        - gcc-c++
+        - make
+        - patch
+        - git
+        - curl
+        - zlib-devel
+        - openssl-devel
+        - ImageMagick-devel
+        - readline-devel
+        - libcurl-devel
+        - libffi-devel
+        - libicu-devel
+        - libxml2-devel
+        - libxslt-devel
+      state: present
+
+  - name: check node exists
+    shell: node --version
+    register: node_exists
+    changed_when: no
+    ignore_errors: true
+
+  - name: nvm script download
+    get_url:
+      url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
+      dest: /home/ec2-user/nvm.sh
+      mode: '0775'
+    when: node_exists is failed
+
+  - name: nvm install
+    command: /bin/bash /home/ec2-user/nvm.sh
+    args:
+      creates: /home/ec2-user/.nvm
+    when: node_exists is failed
+
+  - name: source .bashrc
+    shell: |
+      source ~/.bashrc
+    when: node_exists is failed
+
+  - name: node install
+    shell: bash -lc "nvm install 17.9.1"
+    when: node_exists is failed
+
+  - name: Install mysql to taget node
+    ansible.builtin.yum:
+      name: mysql
+      state: present

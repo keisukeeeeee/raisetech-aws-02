@@ -1,6 +1,11 @@
 version: 2.1
+
 orbs:
   python: circleci/python@2.0.3
+  aws-cli: circleci/aws-cli@4.1.3
+  ansible-playbook: orbss/ansible-playbook@0.0.5
+  ruby: circleci/ruby@2.1.1
+
 jobs:
   cfn-lint:
     executor: python/default
@@ -11,8 +16,90 @@ jobs:
           name: run cfn-lint
           command: |
             cfn-lint -i W3002 -t cloudformation/*.yml
+  cloud-formation-deploy:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: deploy cloudformation
+          command: |
+            set -x
+            aws cloudformation deploy \
+            --template-file cloudformation/cf10aws.yml \
+            --stack-name cci-aws-cf \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides RdsMyUserPassword=adminadmin
+      - run:
+          name: Get EC2 Instance ID
+          command: |
+            INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=Ec210Cf" \
+            --query "Reservations[].Instances[].InstanceId" --output text)
+            echo "Instance ID: $INSTANCE_ID"
+            echo "export INSTANCE_ID=$INSTANCE_ID" >> $BASH_ENV
+      - run:
+          name: Associate Elastic IP
+          command: |
+            aws ec2 associate-address --instance-id $INSTANCE_ID --public-ip 35.78.59.122
+  ansible-playbook:
+    executor: ansible-playbook/default
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: 
+            - "${FINGERPRINTS_KEY}"
+      - ansible-playbook/install:
+          version: 2.10.7
+      - ansible-playbook/playbook:
+          playbook: ansible/playbook.yml
+          playbook-options: '-i ansible/inventory'
+  # serverspec:
+  #   executor: ruby/default
+  #   steps:
+  #     - checkout
+  #     - ruby/install:
+  #         version: '3.1.2'
+  #     - ruby/install-deps:
+  #         app-dir: serverspec
+  #     - run:
+  #         name: execute serverspec
+  #         command: |
+  #           cd serverspec
+  #           bundle exec rspec
+
+# cloudformationを終了させる
+  cloud-formation-delete:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+      - run:
+          name: delete cloudformation stack
+          command: |
+            set -x
+            aws cloudformation delete-stack \
+            --stack-name cci-aws-cf
 
 workflows:
-  raisetech:
+  circleci-cloudformation:
     jobs:
       - cfn-lint
+      - cloud-formation-deploy:
+          requires:
+            - cfn-lint
+      - ansible-playbook:
+          requires:
+            - cloud-formation-deploy
+      # - serverspec:
+      #     requires:
+      #       - ansible-playbook
+      - cloud-formation-delete:
+          requires:
+            - ansible-playbook
+      #       - serverspec
